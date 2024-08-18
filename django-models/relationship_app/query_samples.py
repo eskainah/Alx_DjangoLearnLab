@@ -10,6 +10,4 @@ def list_books_in_library(library_name):
     books = library.books.all()
     return books
 
-def retrieve_librarian(library_name):
-    librarian = Librarian.objects.get(name='')
-    return librarian
+"Librarian.objects.get(library="
