@@ -1,3 +1,4 @@
+from typing import Any
 from django.shortcuts import render
 from relationship_app.models import Book, Library, Author, Librarian
 from django.views.generic import DetailView
@@ -12,4 +13,7 @@ class Liberary_DetailsView(DetailView):
     model = Library
     template_name = 'relationship_app/library_detail.html'
 
-    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        book = self.get_object()
+      
