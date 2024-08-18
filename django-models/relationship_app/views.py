@@ -17,4 +17,4 @@ class LibraryDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         book = self.get_object()
-      
+        context['average_rating'] = book.get_average_rating() 
