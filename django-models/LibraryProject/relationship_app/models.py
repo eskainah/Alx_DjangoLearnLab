@@ -13,10 +13,14 @@ class Book(models.Model):
         Author,
         on_delete = models.CASCADE
     )
-
+    def __str__(self):
+        return self.title
 class Library(models.Model):
     name = models.CharField(max_length=50)
     books = models.ManyToManyField(Book)
+
+    def __str__(self):
+        return self.name
 
 class Librarian(models.Model):
     name = models.CharField(max_length=50)
@@ -24,3 +28,6 @@ class Librarian(models.Model):
         Library,
         on_delete = models.CASCADE
     )
+
+    def __str__(self):
+        return self.name
