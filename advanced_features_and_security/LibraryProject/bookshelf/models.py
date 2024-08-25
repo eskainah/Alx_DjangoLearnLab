@@ -22,7 +22,7 @@ class Book(models.Model):
     
 class CustomUser(AbstractUser):
      date_of_birth = models.DateField(null=True, blank=True)
-     profile_photo = models.ImageField(upload_to="profile_profile"null=True, blank=True)
+     profile_photo = models.ImageField(upload_to="profile_profile", null=True, blank=True)
     
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password):
