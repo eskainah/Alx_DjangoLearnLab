@@ -1,5 +1,10 @@
 from django.contrib import admin
 from .models import Book
+from .models import CustomUser
+from django.contrib.auth.admin import UserAdmin
+
+class CustomUserAdmin(UserAdmin):
+    pass
 
 class BookAdmin(admin.ModelAdmin):
     # Columns to display in the admin list view
@@ -13,3 +18,5 @@ class BookAdmin(admin.ModelAdmin):
 
 # Register your models here.
 admin.site.register(Book)
+
+admin.site.register(CustomUser, CustomUserAdmin)
