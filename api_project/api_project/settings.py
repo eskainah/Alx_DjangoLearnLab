@@ -44,7 +44,7 @@ INSTALLED_APPS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES':[
-        'rest_freamework.permission.TokenAuthentication',
+        'rest_framework.permission.TokenAuthentication',
     ],
 
      'DEFAULT_PERMISSION_CLASSES': [
