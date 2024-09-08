@@ -1,6 +1,8 @@
 from rest_framework import generics
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework import filters
+
 
 from .models import Book
 from .serializers import BookSerializer
@@ -12,6 +14,10 @@ class BookListView(generics.listAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
+    filter_backends = [filters.OrderingFliter, filters.SearchFilter]
+    ordering_fields = ['title', 'author', 'publication_year']
+    search_fields = ['title', 'publication_year']
+
 class BookDetailView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
@@ -21,7 +27,7 @@ class BookDetailView(generics.RetrieveAPIView):
 class BookCreateView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
-    
+
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
