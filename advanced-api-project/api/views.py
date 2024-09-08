@@ -8,13 +8,13 @@ from .models import Book
 from .serializers import BookSerializer
 # Create your views here.
 
-class BookListView(generics.listAPIView):
+class BookListView(generics.ListAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
-    filter_backends = [filters.OrderingFliter, filters.SearchFilter]
+    filter_backends = [filters.OrderingFilter, filters.SearchFilter]
     ordering_fields = ['title', 'author', 'publication_year']
     search_fields = ['title', 'publication_year']
 
