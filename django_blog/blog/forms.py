@@ -19,7 +19,7 @@ class CustomUserChangeForm(UserChangeForm):
         model = User
         fields = ('username', 'first_name', 'last_name', 'email')
 
-class CommentForm(forms.models):
+class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['content']
