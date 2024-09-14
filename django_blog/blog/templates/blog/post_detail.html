@@ -19,5 +19,12 @@
             <a href="{% url 'post_delete' post.id %}">Delete Post</a>
         </button>
     {% endif %}
+
+    <h2>Add Comment to {{ post.title }}</h2>
+    <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+    </form>
 </body>
 </html>
