@@ -37,3 +37,39 @@ def ProfileView(request):
         else:
             form = CustomUserChangeForm(instance = user)
         return render(request, "blog/profile.html", {'form': form})
+    
+
+class NewPost(CreateView):
+    model = Post
+    template_name = "blog/post_form.html"
+    fields = '__all__'
+    success_url = "/posts"
+
+
+class Posts(ListView):
+    model = Post
+    template_name = "blog/post_list.html"
+
+
+class PostDetail(DetailView):
+    model = Post
+    template_name = "blog/posts_detail.html"
+
+
+class PostEdit(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Post
+    template_name = "blog/update_post.html"
+    fields = '__all__'
+    success_url = "/posts"
+
+    def handle_no_permission(self):
+        return redirect('login')
+
+
+class PostDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Post
+    template_name = "blog/delete_post.html"
+    success_url = "/posts"
+
+    def handle_no_permission(self):
+        return redirect('login')
