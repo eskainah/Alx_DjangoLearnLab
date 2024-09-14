@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from  .forms import CustomUserCreationForm
 from .forms import CustomUserChangeForm
 from .models import Post
+from .models import Comment
 
 from django.shortcuts import redirect, render
 from django.views.generic import ListView, CreateView, DeleteView, DetailView, UpdateView
@@ -73,3 +74,20 @@ class PostDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def handle_no_permission(self):
         return redirect('login')
+    
+class CommentUpdateView(UpdateView):
+    model = Comment
+    template_name = "blog/post_detail.html"
+    fields = '__all__'
+    success_url = "/posts"
+
+class CommentDeleteView(DeleteView):
+    model = Comment
+    template_name = "blog/post_detail.html"
+    success_url = "/posts"
+
+class CommentCreateView(CreateView):
+    model = Post
+    template_name = "blog/post_detail.html"
+    fields = '__all__'
+    success_url = "/posts"
