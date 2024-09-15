@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.db.models import Q
 
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import login_required
@@ -9,8 +10,7 @@ from .mixins import UserPassesTestMixin
 from django.contrib.auth.models import User
 from  .forms import CustomUserCreationForm
 from .forms import CustomUserChangeForm
-from .models import Post
-from .models import Comment
+from .models import Post, Comment
 
 from django.shortcuts import redirect, render
 from django.views.generic import ListView, CreateView, DeleteView, DetailView, UpdateView
@@ -91,3 +91,18 @@ class CommentCreateView(CreateView):
     template_name = "blog/post_detail.html"
     fields = '__all__'
     success_url = "/posts"
+
+
+def search_posts(request):
+    query = request.GET.get('q')  # Get the query from the search form
+    results = Post.objects.all()
+
+    if query:
+        # Using Q objects to filter by title, content, or tags
+        results = Post.objects.filter(
+            Q(title__icontains=query) |  # Search by title
+            Q(content__icontains=query) |  # Search by content
+            Q(tags__name__icontains=query)  # Search by tags (from django-taggit)
+        ).distinct()
+
+    return render(request, 'search_results.html', {'results': results, 'query': query})
