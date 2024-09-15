@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import login_required
@@ -11,6 +12,7 @@ from django.contrib.auth.models import User
 from  .forms import CustomUserCreationForm
 from .forms import CustomUserChangeForm
 from .models import Post, Comment
+from taggit.models import Tag
 
 from django.shortcuts import redirect, render
 from django.views.generic import ListView, CreateView, DeleteView, DetailView, UpdateView
@@ -106,3 +108,18 @@ def search_posts(request):
         ).distinct()
 
     return render(request, 'search_results.html', {'results': results, 'query': query})
+
+class PostByTagListView(ListView):
+    model = Post
+    template_name = 'posts_by_tag.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        tag_slug = self.kwargs.get('tag_slug')
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        return Post.objects.filter(tags__in=[tag])
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tag'] = get_object_or_404(Tag, slug=self.kwargs.get('tag_slug'))
+        return context
