@@ -3,7 +3,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserChangeForm
 
-from .models import Comment
+from .models import Comment, Post
+from taggit.forms import TagWidget 
 
 class CustomUserCreationForm(UserCreationForm):
     first_name = forms.CharField(max_length=50, required=True)
@@ -29,3 +30,11 @@ class CommentForm(forms.ModelForm):
             if not content or content.strip() == "":
                 raise forms.ValidationError("Comment cannot be empty.")
             return content
+        
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['title', 'content', 'tags']
+        widgets = {
+            'tags': TagWidget(),
+        }
