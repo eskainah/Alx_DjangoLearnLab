@@ -12,5 +12,11 @@
         <h2><a href="{% url 'post_detail' post.id %}">{{post.title | title}}</h2></a>
         <p>{{post.content}}</p>
     {% endfor %}
+
+    <p>Tags: 
+        {% for tag in post.tags.all %}
+            <a href="{% url 'posts_by_tag' tag.name %}">{{ tag.name }}</a>{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </p>
 </body>
 </html>
