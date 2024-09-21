@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'accounts',
 ]
-
+AUTH_USER_MODEL = 'accounts.Customuser'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
