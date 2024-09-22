@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'posts',
     'accounts',
+    'notifications',
 ]
 AUTH_USER_MODEL = 'accounts.Customuser'
 MIDDLEWARE = [
