@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-qw%==2pzfaq5p%%@99o#188fgu#m+1_zo69k!8k@3^o)8fe@c)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -126,3 +126,38 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# settings.py
+
+# Enable browser's XSS filtering and prevent rendering pages if XSS is detected.
+SECURE_BROWSER_XSS_FILTER = True
+
+# Prevent the site from being loaded in an iframe, protecting against clickjacking attacks.
+X_FRAME_OPTIONS = 'DENY'  # Options: 'DENY', 'SAMEORIGIN', 'ALLOW-FROM'
+
+# Prevent the browser from interpreting files as something else than declared by the content type.
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Redirect all HTTP traffic to HTTPS to ensure secure communication.
+SECURE_SSL_REDIRECT = True
+
+# Enforce HTTPS for cookies.
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# HSTS settings (HTTP Strict Transport Security)
+# Instructs the browser to only communicate with your site over HTTPS.
+SECURE_HSTS_SECONDS = 31536000  # 1 year; adjust the time as necessary
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Applies HSTS policy to all subdomains.
+SECURE_HSTS_PRELOAD = True  # Enables the preload flag for HSTS
+
+# Secure cookie settings
+CSRF_COOKIE_HTTPONLY = True  # Prevents JavaScript from accessing CSRF cookie
+SESSION_COOKIE_HTTPONLY = True  # Prevents JavaScript from accessing the session cookie
+
+# Content Security Policy (CSP) settings - Optional but recommended
+# Example header value: adjust as needed based on your app's resources
+CSP_DEFAULT_SRC = ("'self'",)  # Only allow content from the site's own origin
+
+# Other security-related settings (optional)
+SECURE_REFERRER_POLICY = 'no-referrer-when-downgrade'  # Controls the referrer information sent with requests.
