@@ -46,7 +46,7 @@ class LoginView(APIView):
         token, created = Token.objects.get_or_create(user=user)
         return Response({'token': token.key})
 
-class Follow_Unfollow_UserView(generics.GenericAPIView):
+class FollowUserView(generics.GenericAPIView):
     authentication_classes = [authenticate]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -62,6 +62,9 @@ class Follow_Unfollow_UserView(generics.GenericAPIView):
         request.user.following.add(follow)
         return Response({'detail': f'You now follow {follow.username}.'}, status=status.HTTP_200_OK)
 
+class UnfollowUserView(generics.GenericAPIView):
+    authentication_classes = [authenticate]
+    permission_classes = [permissions.IsAuthenticated]
 
     def delete(self, request, *args, **kwargs): #unfollowing a user
         unfollow = get_object_or_404(User, id=kwargs.get('user_id'))
