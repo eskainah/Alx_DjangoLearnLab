@@ -6,7 +6,8 @@ from django.contrib.auth.models import AbstractUser
 class CustomUser(AbstractUser):
     bio = models.TextField(max_length=250)
     profile_picture = models.ImageField(upload_to='profile_pictures/', null=True)
-    followers = models.ManyToManyField('self', symmetrical=False)
+    followers = models.ManyToManyField('self', symmetrical=False, related_name='followed_by')
+    following = models.ManyToManyField('self', symmetrical=False, related_name='follows')
 
     def __str__(self):
         return self.username
