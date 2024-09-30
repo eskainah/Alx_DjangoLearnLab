@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'events',
 ]
-AUTH_USER_MODEL = 'events.CustomUser'
+AUTH_USER_MODEL = 'event.CustomUser'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
