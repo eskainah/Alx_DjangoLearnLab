@@ -5,7 +5,7 @@ from .forms import CustomUserCreationForm
 
 #render homepage
 def home(request):
-    return render(request, 'home.html')
+    return render(request, 'events/home.html')
 
 def register(request):
     if request.method == 'POST':
@@ -19,7 +19,7 @@ def register(request):
     else:
         #register the a new user
         form = CustomUserCreationForm()
-    return render(request, 'accounts/register.html', {'form': form})
+    return render(request, 'events/register.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':
@@ -30,4 +30,4 @@ def login_view(request):
             login(request, user)
              #Redirect to homepage
             return redirect('home')
-    return render(request, 'accounts/login.html')
+    return render(request, 'events/login.html')
