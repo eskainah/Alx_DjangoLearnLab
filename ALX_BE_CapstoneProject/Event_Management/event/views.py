@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from .models import CustomUser
-from ..event.forms import CustomUserCreationForm  
+from event.forms import CustomUserCreationForm  
 
 #render homepage
 def home(request):
