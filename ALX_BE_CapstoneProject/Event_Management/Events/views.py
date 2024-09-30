@@ -3,6 +3,10 @@ from django.contrib.auth import login, authenticate
 from .models import CustomUser
 from .forms import CustomUserCreationForm  
 
+#render homepage
+def home(request):
+    return render(request, 'home.html')
+
 def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
