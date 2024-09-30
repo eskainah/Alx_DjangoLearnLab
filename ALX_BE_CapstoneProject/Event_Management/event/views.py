@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from .models import CustomUser
 from event.forms import CustomUserCreationForm  
+from django.contrib import messages
 
 #render homepage
 def home(request):
@@ -16,6 +17,8 @@ def register(request):
             login(request, user)
             #Redirect to homepage
             return redirect('home')  
+        else:
+            messages.error(request, "There was an error with your registration.")
     else:
         #register the a new user
         form = CustomUserCreationForm()
@@ -30,4 +33,6 @@ def login_view(request):
             login(request, user)
              #Redirect to homepage
             return redirect('home')
+        else:
+            messages.error(request, 'Invalid username or password.')
     return render(request, 'event/login.html')
