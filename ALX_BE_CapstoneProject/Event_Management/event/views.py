@@ -71,3 +71,11 @@ def update_event(request, pk):
     else:
         form = EventForm(instance=event)
     return render(request, 'events/event_form.html', {'form': form})
+
+def delete_event(request, pk):
+    event = get_object_or_404(Event, pk=pk)
+    if request.method == 'POST':
+        event.delete()
+        messages.success(request, 'Event deleted successfully!')
+        return redirect('event_list')
+    return render(request, 'events/event_confirm_delete.html', {'event': event})
