@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
-from .models import CustomUser
+from .models import CustomUser, Event
 from event.forms import CustomUserCreationForm, EventForm
 from django.contrib import messages
 
@@ -49,3 +49,13 @@ def create_event(request):
     else:
         form = EventForm()
     return render(request, 'events/event_form.html', {'form': form})
+
+# View the list of events
+def event_list(request):
+    events = Event.objects.all()
+    return render(request, 'events/event_list.html', {'events': events})
+
+# View event details
+def event_detail(request, pk):
+    event = get_object_or_404(Event, pk=pk)
+    return render(request, 'events/event_detail.html', {'event': event})
