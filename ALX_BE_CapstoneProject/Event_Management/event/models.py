@@ -1,5 +1,5 @@
 from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.db import models
 
 #create a Custom user model
@@ -21,7 +21,7 @@ class Event(models.Model):
     location = models.TextField(max_length=250)
     capacity = models.PositiveIntegerField(default=100)  # Maximum number of attendees
     current_capacity = models.PositiveIntegerField(default=0)  # Current number of registrations
-    organizer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='organizer')
+    organizer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='organizer')
     created_date = models.DateField()
     #category = models.ForeignKey('Category', on_delete=models.CASCADE)
     #is_recurring = models.BooleanField(default=False)
