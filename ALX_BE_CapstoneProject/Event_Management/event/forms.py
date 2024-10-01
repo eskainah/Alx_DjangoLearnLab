@@ -25,7 +25,7 @@ class CustomUserCreationForm(UserCreationForm):
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = '__all__'
+        fields = ['name', 'description', 'date', 'location', 'capacity', 'category']
     def clean_date_time(self):
         date_time = self.cleaned_data['date_time']
         if date_time < timezone.now():
