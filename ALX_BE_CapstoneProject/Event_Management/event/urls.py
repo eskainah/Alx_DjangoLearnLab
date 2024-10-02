@@ -9,7 +9,7 @@ router.register(r'profile', ProfileViewSet, basename='profile')
 
 
 urlpatterns = [
-     path('', include(router.urls)),
+    path('', include(router.urls)),
     path('register/', register, name='register'),
     path('login/', login_view, name='login'),
     path('', home, name='home'),
