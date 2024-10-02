@@ -14,6 +14,12 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return f"{self.first_name} {self.middle_name} {self.last_name}"
 
+class Profile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    business_name = models.CharField(max_length=100, blank=True)
+    
+    def __str__(self):
+        return self.user.username
 class Event(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
