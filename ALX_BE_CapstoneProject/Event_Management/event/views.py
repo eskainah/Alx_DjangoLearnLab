@@ -1,8 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
-from .models import CustomUser, Event
+
 from event.forms import CustomUserCreationForm, EventForm
 from django.contrib import messages
+
+from .models import CustomUser, Event, Profile
+from .serializers import ProfileSerializer
+
+from rest_framework import viewsets, permissions
+
+from rest_framework.response import Response
+from rest_framework import status
 
 #render homepage
 def home(request):
@@ -36,6 +44,40 @@ def login_view(request):
         else:
             messages.error(request, 'Invalid username or password.')
     return render(request, 'event/login.html')
+
+#View for User profile
+class ProfileViewSet(viewsets.ModelViewSet):
+    serializer_class = ProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # Return the profile for the logged-in user
+        return Profile.objects.filter(user=self.request.user)
+
+    def create_profile(self, serializer):
+        # Create a profile for the user
+        serializer.save(user=self.request.user)
+
+    def retrieve(self, request, *args, **kwargs):
+        # Override retrieve to return the profile of the logged-in user
+        profile = get_object_or_404(Profile, user=request.user)
+        serializer = self.get_serializer(profile)
+        return Response(serializer.data)
+
+    def update(self, request, *args, **kwargs):
+        # Override update to allow users to update their own profile
+        profile = get_object_or_404(Profile, user=request.user)
+        serializer = self.get_serializer(profile, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        # Override destroy to allow users to delete their own profile
+        profile = get_object_or_404(Profile, user=request.user)
+        profile.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 def create_event(request):
     if request.method == 'POST':
