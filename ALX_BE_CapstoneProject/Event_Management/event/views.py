@@ -5,7 +5,7 @@ from event.forms import CustomUserCreationForm, EventForm
 from django.contrib import messages
 
 from .models import CustomUser, Event, Profile
-from .serializers import ProfileSerializer
+from .serializers import ProfileSerializer, EventSerializer
 
 from rest_framework import viewsets, permissions
 
