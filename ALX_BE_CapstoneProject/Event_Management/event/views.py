@@ -79,45 +79,64 @@ class ProfileViewSet(viewsets.ModelViewSet):
         profile.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-def create_event(request):
-    if request.method == 'POST':
-        form = EventForm(request.POST)
-        if form.is_valid():
-            form.save()
+class EventViewSet(viewsets.ModelViewSet):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+    permission_classes = [permissions.IsAuthenticated]  # Restrict access to authenticated users
+
+    def list(self, request):
+        """
+        Retrieve a list of all events.
+        """
+        events = self.queryset
+        serializer = self.get_serializer(events, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        """
+        Retrieve a specific event by ID.
+        """
+        try:
+            event = self.get_object()
+            serializer = self.get_serializer(event)
+            return Response(serializer.data)
+        except Event.DoesNotExist:
+            messages.error(request, 'Event not found.')
+            return redirect('event_list')  # Redirect to event list on error
+
+    def create(self, request):
+        """
+        Create a new event.
+        """
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            event = serializer.save()  # Save the event instance
             messages.success(request, 'Event created successfully!')
-            return redirect('event/home')  # Redirect to home or event list
+            return redirect('event_list')  # Redirect to the event list after creation
         else:
             messages.error(request, 'There was an error creating the event.')
-    else:
-        form = EventForm()
-    return render(request, 'events/event_form.html', {'form': form})
+            return render(request, 'events/event_form.html', {'form': serializer.errors})
 
-# View the list of events
-def event_list(request):
-    events = Event.objects.all()
-    return render(request, 'events/event_list.html', {'events': events})
-
-# View event details
-def event_detail(request, pk):
-    event = get_object_or_404(Event, pk=pk)
-    return render(request, 'events/event_detail.html', {'event': event})
-
-def update_event(request, pk):
-    event = get_object_or_404(Event, pk=pk)
-    if request.method == 'POST':
-        form = EventForm(request.POST, instance=event)
-        if form.is_valid():
-            form.save()
+    def update(self, request, pk=None):
+        """
+        Update an existing event by ID.
+        """
+        event = self.get_object()
+        serializer = self.get_serializer(event, data=request.data, partial=True)  # Partial update
+        if serializer.is_valid():
+            serializer.save()  # Save the updated event instance
             messages.success(request, 'Event updated successfully!')
-            return redirect('event_detail', pk=event.pk)
-    else:
-        form = EventForm(instance=event)
-    return render(request, 'events/event_form.html', {'form': form})
+            return redirect('event_detail', pk=event.pk)  # Redirect to event detail after update
+        else:
+            messages.error(request, 'There was an error updating the event.')
+            return render(request, 'events/event_form.html', {'form': serializer.errors})
 
-def delete_event(request, pk):
-    event = get_object_or_404(Event, pk=pk)
-    if request.method == 'POST':
-        event.delete()
+    def destroy(self, request, pk=None):
+        """
+        Delete an existing event by ID.
+        """
+        event = self.get_object()
+        event.delete()  # Delete the event instance
         messages.success(request, 'Event deleted successfully!')
-        return redirect('event_list')
-    return render(request, 'events/event_confirm_delete.html', {'event': event})
+        return redirect('event_list')  # Redirect to event list after deletion
+
