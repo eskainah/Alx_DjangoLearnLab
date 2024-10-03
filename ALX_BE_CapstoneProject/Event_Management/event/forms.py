@@ -13,7 +13,7 @@ class CustomUserCreationForm(UserCreationForm):
 
     class Meta:
         model = CustomUser
-        fields = UserCreationForm.Meta.fields + ('first_name', 'middle_name','last_name', 'email')
+        fields = UserCreationForm.Meta.fields + ('username','first_name', 'middle_name','last_name', 'email')
 
     #validation to ensure that a user cannot register with an email that is already in use
     def clean_email(self):
