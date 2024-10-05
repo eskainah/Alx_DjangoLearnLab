@@ -13,9 +13,9 @@ class EventViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         # Return events created by the authenticated user
         return Event.objects.filter(organizer=self.request.user)
-
+    
     def list(self, request):
-        events = self.get_queryset()  #returns user's events
+        events = self.get_queryset()  # Returns user's events
         serializer = self.get_serializer(events, many=True)
         return Response(serializer.data)
 
@@ -27,20 +27,21 @@ class EventViewSet(viewsets.ModelViewSet):
     def create(self, request):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
+            # Set the organizer to the current user
             serializer.validated_data['organizer'] = request.user
             event = serializer.save()
-            return Response(serializer.data, {'message': 'Event created'}, status=status.HTTP_201_CREATED)
+            return Response({'message': 'Event created', 'event': serializer.data}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, pk=None):
-        event = get_object_or_404(self.get_queryset(), pk=pk) 
+        event = get_object_or_404(self.get_queryset(), pk=pk)
         serializer = self.get_serializer(event, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
-            return Response({'message': 'Event updated'}, serializer.data)
+            updated_event = serializer.save()
+            return Response({'message': 'Event updated', 'event': serializer.data}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, pk=None):
-        event = get_object_or_404(self.get_queryset(), pk=pk) 
+        event = get_object_or_404(self.get_queryset(), pk=pk)
         event.delete()
-        return Response({'message': 'Event Deleted'}, status=status.HTTP_204_NO_CONTENT)
+        return Response({'message': 'Event deleted'}, status=status.HTTP_204_NO_CONTENT)
