@@ -9,7 +9,7 @@ class EventSerializer(serializers.ModelSerializer):
     
     def validate(self, attrs):
         if 'date_time' in attrs and attrs['date_time'] < timezone.now():
-            raise serializers.ValidationError("The event date and time must be in the future.")
+            raise serializers.ValidationError("Please enter a date in the future")
         if 'title' not in attrs or not attrs['title']:
             raise serializers.ValidationError("Title is required.")
         if 'location' not in attrs or not attrs['location']:
