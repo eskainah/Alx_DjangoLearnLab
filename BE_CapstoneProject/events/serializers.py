@@ -14,4 +14,7 @@ class EventSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Title is required.")
         if 'location' not in attrs or not attrs['location']:
             raise serializers.ValidationError("Location is required.")
+        if attrs.get('current_capacity', 0) > attrs.get('capacity', 0):
+            raise serializers.ValidationError("Current capacity cannot exceed maximum capacity.")
         return attrs
+       
