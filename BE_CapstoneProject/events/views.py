@@ -1,83 +1,52 @@
-from rest_framework import viewsets, permissions, status
-from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
+from rest_framework import viewsets, permissions
+from django.utils import timezone
 from .models import Event
 from .serializers import EventSerializer
 from .permissions import IsEventOwner
-from django.utils import timezone
+from dateutil import parser
+from .mixins import EventOperationsMixin
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 
-# Create your views here.
-class EventViewSet(viewsets.ModelViewSet):
-    
+class EventViewSet(viewsets.ModelViewSet, EventOperationsMixin):
     serializer_class = EventSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsEventOwner]  # Allow read-only for unauthenticated users
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsEventOwner]
 
     def get_queryset(self):
-        # Default to returning all upcoming events
         now = timezone.now()
         return Event.objects.filter(date_time__gt=now)
 
     def list(self, request):
-        # Check for query parameters
-        title = request.query_params.get('title', None)
-        location = request.query_params.get('location', None)
-        start_date = request.query_params.get('start_date', None)
-        end_date = request.query_params.get('end_date', None)
+        return self.list_events(request)
 
-        # Get the base queryset for upcoming events
-        events = self.get_queryset()
+    def create(self, request):
+        return self.create_event(request)
 
-        # Apply optional filters
-        if title:
-            events = events.filter(title__icontains=title)
-        if location:
-            events = events.filter(location__icontains=location)
-        if start_date:
-            events = events.filter(date_time__gte=start_date)
-        if end_date:
-            events = events.filter(date_time__lte=end_date)
+    def update(self, request, pk=None):
+        return self.update_event(request, pk)
 
-        serializer = self.get_serializer(events, many=True)
-        return Response(serializer.data)
-    
-    '''serializer_class = EventSerializer #list event creaete by user 
-    permission_classes = [permissions.IsAuthenticated, IsEventOwner]
+    def destroy(self, request, pk=None):
+        return self.destroy_event(request, pk)
 
-    def get_queryset(self):
-        # Return events created by the authenticated user
-        return Event.objects.filter(organizer=self.request.user)
-    
-    def list(self, request):
-        events = self.get_queryset()  # Returns user's events
-        serializer = self.get_serializer(events, many=True)
-        return Response(serializer.data)
-'''
+    def get_filters(self, query_params):
+        filters = {}
+        if query_params.get('title'):
+            filters['title__icontains'] = query_params['title']
+        if query_params.get('location'):
+            filters['location__icontains'] = query_params['location']
+        if start_date := query_params.get('start_date'):
+            filters['date_time__gte'] = self.parse_date(start_date)
+        if end_date := query_params.get('end_date'):
+            filters['date_time__lte'] = self.parse_date(end_date)
+        return filters
+
+    def parse_date(self, date_str):
+        try:
+            return parser.parse(date_str)
+        except (ValueError, TypeError):
+            raise Response({'error': f'Invalid date format for {date_str}'}, status=status.HTTP_400_BAD_REQUEST)
+
     def retrieve(self, request, pk=None):
         event = get_object_or_404(self.get_queryset(), pk=pk)
         serializer = self.get_serializer(event)
         return Response(serializer.data)
-
-    def create(self, request):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            # Set the organizer to the current user
-            serializer.validated_data['organizer'] = request.user
-            event = serializer.save()
-            return Response({'message': 'Event created', 'event': serializer.data}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-    def update(self, request, pk=None):
-        event = get_object_or_404(self.get_queryset(), pk=pk)
-        serializer = self.get_serializer(event, data=request.data, partial=True)
-        if serializer.is_valid():
-            self.check_object_permissions(request, event) 
-            updated_event = serializer.save()
-            return Response({'message': 'Event updated', 'event': serializer.data}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def destroy(self, request, pk=None):
-        event = get_object_or_404(self.get_queryset(), pk=pk)
-        self.check_object_permissions(request, event) 
-        event.delete()
-        return Response({'message': 'Event deleted'}, status=status.HTTP_204_NO_CONTENT)
