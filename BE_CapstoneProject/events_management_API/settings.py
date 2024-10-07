@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-3j9zczjq%1e2cn!!k91c0md7z%fmk*xx6ri_@trxtnx5xm3#0$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['alx-events-api.herokuapp.com']
 
 
 # Application definition
@@ -50,6 +50,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
 }
 
 # settings.py
@@ -57,6 +59,7 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
 MIDDLEWARE = [
+     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -91,9 +94,13 @@ WSGI_APPLICATION = 'events_management_API.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+   'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'libraryDB',
+        'USER': 'root',
+        'PASSWORD': 'esk@1998',
+        'HOST': 'localhost',
+        'PORT': '3306'
     }
 }
 
